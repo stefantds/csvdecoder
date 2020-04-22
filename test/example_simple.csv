@@ -1,0 +1,5 @@
+name,age,heroes
+john,32,["green_lantern","spiderman"]
+jane,19,["robin"]
+richard,,[]
+helen,45,["ironman"]

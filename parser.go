@@ -119,6 +119,22 @@ func (p *Parser) Next(data interface{}) (eof bool, err error) {
 				}
 				field.SetInt(col)
 			}
+		case reflect.Int32:
+			if record != "" {
+				col, err := strconv.ParseInt(record, 10, 32)
+				if err != nil {
+					return false, err
+				}
+				field.SetInt(col)
+			}
+		case reflect.Int64:
+			if record != "" {
+				col, err := strconv.ParseInt(record, 10, 64)
+				if err != nil {
+					return false, err
+				}
+				field.SetInt(col)
+			}
 		case reflect.Float32:
 			if record != "" {
 				col, err := strconv.ParseFloat(record, 32)

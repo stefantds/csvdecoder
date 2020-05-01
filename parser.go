@@ -35,7 +35,9 @@ func NewParser(reader io.Reader, config *ParserConfig) (*Parser, error) {
 	if config.Comma != 0 {
 		p.Reader.Comma = config.Comma
 	}
+
 	p.Reader.LazyQuotes = true
+	p.Reader.FieldsPerRecord = -1
 
 	if config.IgnoreHeaders {
 		// consume the first line
@@ -86,7 +88,6 @@ func (p *Parser) Next(data interface{}) (eof bool, err error) {
 			} else {
 				return false, errors.New("Unsupported pointer to struct that doesn't implement the Decoder interface")
 			}
-
 		case reflect.Interface:
 			fieldType := field.Type()
 			if field.Type().Implements(decoderType) {
@@ -99,7 +100,7 @@ func (p *Parser) Next(data interface{}) (eof bool, err error) {
 				fieldDecoder, _ := field.Addr().Elem().Interface().(Decoder)
 				fieldDecoder.DecodeRecord(record)
 			} else {
-				return false, errors.New("Unsupported pointer to struct that doesn't implement deserializer")
+				return false, errors.New("Unsupported pointer to struct that doesn't implement the Decoder interface")
 			}
 		case reflect.String:
 			field.SetString(record)

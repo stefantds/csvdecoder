@@ -21,10 +21,9 @@ type ExampleStringArrayRow struct {
 }
 
 type ExampleSimpleRow struct {
-	Name   string
-	Age    int
-	Gender string
-	Real   bool
+	Name string
+	Age  int
+	Real bool
 }
 
 type ExampleIntArrayRow struct {
@@ -67,26 +66,25 @@ type TestExampleDeserializerRow struct {
 
 func main() {
 	fmt.Println("running")
-	file, err := os.Open("/Users/stefan.tudose/private/gitrepos/csvdecoder/example_simple.csvdecoder")
+	file, err := os.Open("/Users/stefan.tudose/private/gitrepos/csvdecoder/test/example_simple.csv")
 	if err != nil {
 		panic(err)
 	}
 	defer file.Close()
 
-	parser, err := csvdecoder.NewParser(file)
+	parser, err := csvdecoder.NewParser(file, &csvdecoder.ParserConfig{IgnoreHeaders: true})
 	if err != nil {
 		panic(err)
 	}
 
-	for {
+	for parser.Nexty() {
 		data := ExampleSimpleRow{}
-		eof, err := parser.Next(&data)
-		if eof {
-			return
-		}
-		if err != nil {
+		if err := parser.Scan(&data.Name, &data.Age, &data.Real); err != nil {
 			panic(err)
 		}
 		fmt.Println(data)
+	}
+	if err = parser.Err(); err != nil {
+		panic(err)
 	}
 }

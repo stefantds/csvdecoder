@@ -1,5 +1,5 @@
-name,age,heroes
-john,32,["green_lantern","spiderman"]
-jane,19,["robin"]
-richard,,[]
-helen,45,["ironman"]
+name,age,real
+john,32,true
+jane,,false
+richard,,
+helen,45,

@@ -18,76 +18,22 @@ func (d *MyDecoder) DecodedValue() string {
 	return d.value
 }
 
-func TestDecoder(t *testing.T) {
-	type TestRow struct {
-		Field      *MyDecoder
-		OtherField int
-	}
-
-	for _, tc := range []struct {
-		name      string
-		RowStruct TestRow
-		data      string
-		expected  string
-	}{
-		{
-			name:      "should work for a struct with uninitialized pointers",
-			RowStruct: TestRow{},
-			data:      "record1\t1\n",
-			expected:  "record1!",
-		},
-		{
-			name: "should work for a struct with initialized pointers",
-			RowStruct: TestRow{
-				Field: &MyDecoder{},
-			},
-			data:     "record2\t2\n",
-			expected: "record2!",
-		},
-	} {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			parser, err := NewParser(strings.NewReader(tc.data), &ParserConfig{IgnoreHeaders: false, Comma: '\t'})
-			if err != nil {
-				t.Fatalf("could not create parser: %w", err)
-			}
-
-			for {
-				eof, err := parser.Next(&tc.RowStruct)
-				if err != nil {
-					t.Error(err)
-				}
-
-				if tc.RowStruct.Field.DecodedValue() != tc.expected {
-					t.Errorf("expected value '%s' got '%s'", tc.expected, tc.RowStruct.Field.DecodedValue())
-				}
-
-				if eof {
-					break
-				}
-			}
-		})
-	}
-}
-
-func TestDecoderInterface(t *testing.T) {
+func TestDecoderStruct(t *testing.T) {
 	type TestRowWithInterface struct {
 		Field      Decoder
 		OtherField int
 	}
 
 	for _, tc := range []struct {
-		name      string
-		RowStruct TestRowWithInterface
-		data      string
-		expected  string
+		name     string
+		dest     MyDecoder
+		data     string
+		expected string
 	}{
 		{
-			name: "should work for a struct using the Decoder interface",
-			RowStruct: TestRowWithInterface{
-				Field: &MyDecoder{},
-			},
-			data:     "record1\t1\n",
+			name:     "should work for a struct using the Decoder interface",
+			dest:     MyDecoder{},
+			data:     "record1\n",
 			expected: "record1!",
 		},
 	} {
@@ -98,19 +44,125 @@ func TestDecoderInterface(t *testing.T) {
 				t.Fatalf("could not create parser: %w", err)
 			}
 
-			for {
-				eof, err := parser.Next(&tc.RowStruct)
-				if err != nil {
+			for parser.Nexty() {
+				if err := parser.Scan(&tc.dest); err != nil {
 					t.Error(err)
 				}
-
-				if tc.RowStruct.Field.(*MyDecoder).DecodedValue() != tc.expected {
-					t.Errorf("expected value '%s' got '%s'", tc.expected, tc.RowStruct.Field.(*MyDecoder).DecodedValue())
+				if tc.dest.DecodedValue() != tc.expected {
+					t.Errorf("expected value '%s' got '%s'", tc.expected, tc.dest.DecodedValue())
 				}
+			}
+			if err = parser.Err(); err != nil {
+				t.Error(err)
+			}
+		})
+	}
+}
 
-				if eof {
-					break
+func TestDecoderPointer(t *testing.T) {
+	for _, tc := range []struct {
+		name     string
+		dest     *MyDecoder
+		data     string
+		expected string
+	}{
+		{
+			name:     "should work for a struct holding a pointer to a decoder",
+			dest:     &MyDecoder{},
+			data:     "record1\n",
+			expected: "record1!",
+		},
+	} {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			parser, err := NewParser(strings.NewReader(tc.data), &ParserConfig{IgnoreHeaders: false, Comma: '\t'})
+			if err != nil {
+				t.Fatalf("could not create parser: %w", err)
+			}
+
+			for parser.Nexty() {
+				if err := parser.Scan(&tc.dest); err != nil {
+					t.Error(err)
 				}
+				if tc.dest.DecodedValue() != tc.expected {
+					t.Errorf("expected value '%s' got '%s'", tc.expected, tc.dest.DecodedValue())
+				}
+			}
+			if err = parser.Err(); err != nil {
+				t.Error(err)
+			}
+		})
+	}
+}
+
+func TestDecoderDoublePointer(t *testing.T) {
+	myDec := &MyDecoder{}
+	for _, tc := range []struct {
+		name     string
+		dest     **MyDecoder
+		data     string
+		expected string
+	}{
+		{
+			name:     "should work for a struct holding a double pointer to a decoder",
+			dest:     &myDec,
+			data:     "record1\n",
+			expected: "record1!",
+		},
+	} {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			parser, err := NewParser(strings.NewReader(tc.data), &ParserConfig{IgnoreHeaders: false, Comma: '\t'})
+			if err != nil {
+				t.Fatalf("could not create parser: %w", err)
+			}
+
+			for parser.Nexty() {
+				if err := parser.Scan(&tc.dest); err != nil {
+					t.Error(err)
+				}
+				if (*tc.dest).DecodedValue() != tc.expected {
+					t.Errorf("expected value '%s' got '%s'", tc.expected, (*tc.dest).DecodedValue())
+				}
+			}
+			if err = parser.Err(); err != nil {
+				t.Error(err)
+			}
+		})
+	}
+}
+
+func TestDecoderInterface(t *testing.T) {
+	for _, tc := range []struct {
+		name     string
+		dest     Decoder
+		data     string
+		expected string
+	}{
+		{
+			name:     "should work for a struct using the Decoder interface",
+			dest:     &MyDecoder{},
+			data:     "record1\n",
+			expected: "record1!",
+		},
+	} {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			parser, err := NewParser(strings.NewReader(tc.data), &ParserConfig{IgnoreHeaders: false})
+			if err != nil {
+				t.Fatalf("could not create parser: %w", err)
+			}
+
+			for parser.Nexty() {
+				if err := parser.Scan(tc.dest); err != nil {
+					t.Error(err)
+				}
+				if tc.dest.(*MyDecoder).DecodedValue() != tc.expected {
+					t.Errorf("expected value '%s' got '%s'", tc.expected, tc.dest.(*MyDecoder).DecodedValue())
+				}
+			}
+			if err = parser.Err(); err != nil {
+				t.Error(err)
 			}
 		})
 	}

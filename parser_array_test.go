@@ -49,8 +49,8 @@ func TestIntArray(t *testing.T) {
 				t.Fatalf("could not create parser: %w", err)
 			}
 
-			for {
-				eof, err := parser.Next(&tc.RowStruct)
+			for parser.Next() {
+				err := parser.Scan(&tc.RowStruct.Field)
 				if err != nil {
 					t.Error(err)
 				}
@@ -58,10 +58,9 @@ func TestIntArray(t *testing.T) {
 				if !reflect.DeepEqual(tc.RowStruct.Field, tc.expected) {
 					t.Errorf("expected value '%v' got '%v'", tc.expected, tc.RowStruct.Field)
 				}
-
-				if eof {
-					break
-				}
+			}
+			if parser.Err() != nil {
+				t.Errorf("parser error: %w", err)
 			}
 		})
 	}
@@ -110,8 +109,8 @@ func TestMultiLevelIntArray(t *testing.T) {
 				t.Fatalf("could not create parser: %w", err)
 			}
 
-			for {
-				eof, err := parser.Next(&tc.RowStruct)
+			for parser.Next() {
+				err := parser.Scan(&tc.RowStruct.Field)
 				if err != nil {
 					t.Error(err)
 				}
@@ -119,10 +118,9 @@ func TestMultiLevelIntArray(t *testing.T) {
 				if !reflect.DeepEqual(tc.RowStruct.Field, tc.expected) {
 					t.Errorf("expected value '%v' got '%v'", tc.expected, tc.RowStruct.Field)
 				}
-
-				if eof {
-					break
-				}
+			}
+			if parser.Err() != nil {
+				t.Errorf("parser error: %w", err)
 			}
 		})
 	}
@@ -196,7 +194,7 @@ func TestStructArray(t *testing.T) {
 				t.Fatalf("could not create parser: %w", err)
 			}
 
-			for parser.Nexty() {
+			for parser.Next() {
 				err := parser.Scan(&tc.RowStruct.Field)
 				if err != nil {
 					t.Error(err)

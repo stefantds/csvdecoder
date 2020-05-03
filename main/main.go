@@ -77,7 +77,7 @@ func main() {
 		panic(err)
 	}
 
-	for parser.Nexty() {
+	for parser.Next() {
 		data := ExampleSimpleRow{}
 		if err := parser.Scan(&data.Name, &data.Age, &data.Real); err != nil {
 			panic(err)

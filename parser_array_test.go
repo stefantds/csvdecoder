@@ -127,3 +127,88 @@ func TestMultiLevelIntArray(t *testing.T) {
 		})
 	}
 }
+
+func TestStructArray(t *testing.T) {
+	type MyStruct struct {
+		A int    `json:"a"`
+		B int32  `json:"b"`
+		C int64  `json:"c"`
+		D string `json:"d"`
+		E bool   `json:"e"`
+	}
+
+	type TestRow struct {
+		Field []MyStruct
+	}
+
+	for _, tc := range []struct {
+		name      string
+		RowStruct TestRow
+		data      string
+		expected  []MyStruct
+	}{
+		{
+			name:      "should work for an empty array",
+			RowStruct: TestRow{},
+			data:      "[]\n",
+			expected:  []MyStruct{},
+		},
+		{
+			name:      "should work for an array with one value",
+			RowStruct: TestRow{},
+			data:      `[{"a":1, "b":2, "c": 3, "d":"value1", "e": true}]`,
+			expected: []MyStruct{
+				{
+					A: 1,
+					B: 2,
+					C: 3,
+					D: "value1",
+					E: true,
+				},
+			},
+		},
+		{
+			name:      "should work for an array with multiple values",
+			RowStruct: TestRow{},
+			data:      `[{"a":1, "b":2, "c": 3, "d":"value1", "e": true}, {"a":4, "b":5, "c": 6, "d":"value2", "e": false}]`,
+			expected: []MyStruct{
+				{
+					A: 1,
+					B: 2,
+					C: 3,
+					D: "value1",
+					E: true,
+				},
+				{
+					A: 4,
+					B: 5,
+					C: 6,
+					D: "value2",
+					E: false,
+				},
+			},
+		},
+	} {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			parser, err := NewParser(strings.NewReader(tc.data), &ParserConfig{IgnoreHeaders: false, Comma: '\t'})
+			if err != nil {
+				t.Fatalf("could not create parser: %w", err)
+			}
+
+			for parser.Nexty() {
+				err := parser.Scan(&tc.RowStruct.Field)
+				if err != nil {
+					t.Error(err)
+				}
+
+				if !reflect.DeepEqual(tc.RowStruct.Field, tc.expected) {
+					t.Errorf("expected value '%v' got '%v'", tc.expected, tc.RowStruct.Field)
+				}
+			}
+			if parser.Err() != nil {
+				t.Errorf("parser error: %w", err)
+			}
+		})
+	}
+}

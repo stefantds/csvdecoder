@@ -1,9 +1,11 @@
 package csvdecoder
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 // convertAssignValues copies to dest the value in src, converting it if possible.
@@ -87,6 +89,16 @@ func convertAssignValue(dest interface{}, src string) error {
 			return err
 		}
 		dv.SetFloat(f64)
+		return nil
+	case reflect.Slice:
+		objType := dv.Type()
+		obj := reflect.New(objType).Interface()
+
+		if err := json.NewDecoder(strings.NewReader(src)).Decode(&obj); err != nil {
+			return fmt.Errorf("could not parse %s as JSON array: %w", src, err)
+		}
+
+		dv.Set(reflect.ValueOf(obj).Elem())
 		return nil
 	}
 

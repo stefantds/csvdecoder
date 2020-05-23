@@ -44,7 +44,7 @@ func TestIntArray(t *testing.T) {
 	} {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			parser, err := NewParser(strings.NewReader(tc.data), &ParserConfig{IgnoreHeaders: false, Comma: '\t'})
+			parser, err := NewParserWithConfig(strings.NewReader(tc.data), ParserConfig{IgnoreHeaders: false, Comma: '\t'})
 			if err != nil {
 				t.Fatalf("could not create parser: %w", err)
 			}
@@ -104,7 +104,7 @@ func TestMultiLevelIntArray(t *testing.T) {
 	} {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			parser, err := NewParser(strings.NewReader(tc.data), &ParserConfig{IgnoreHeaders: false, Comma: '\t'})
+			parser, err := NewParserWithConfig(strings.NewReader(tc.data), ParserConfig{IgnoreHeaders: false, Comma: '\t'})
 			if err != nil {
 				t.Fatalf("could not create parser: %w", err)
 			}
@@ -189,7 +189,7 @@ func TestStructArray(t *testing.T) {
 	} {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			parser, err := NewParser(strings.NewReader(tc.data), &ParserConfig{IgnoreHeaders: false, Comma: '\t'})
+			parser, err := NewParserWithConfig(strings.NewReader(tc.data), ParserConfig{IgnoreHeaders: false, Comma: '\t'})
 			if err != nil {
 				t.Fatalf("could not create parser: %w", err)
 			}

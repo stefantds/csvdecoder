@@ -9,7 +9,7 @@ import (
 
 type Parser struct {
 	Reader           *csv.Reader
-	config           *ParserConfig
+	config           ParserConfig
 	currentRowValues []string
 	lastErr          error
 }
@@ -24,7 +24,15 @@ type Decoder interface {
 	DecodeRecord(s string) error
 }
 
-func NewParser(reader io.Reader, config *ParserConfig) (*Parser, error) {
+func NewParserWithConfig(reader io.Reader, config ParserConfig) (*Parser, error) {
+	return newParser(reader, config)
+}
+
+func NewParser(reader io.Reader) (*Parser, error) {
+	return newParser(reader, ParserConfig{})
+}
+
+func newParser(reader io.Reader, config ParserConfig) (*Parser, error) {
 	p := &Parser{
 		Reader: csv.NewReader(reader),
 		config: config,

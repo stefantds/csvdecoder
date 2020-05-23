@@ -14,10 +14,11 @@ type Parser struct {
 	lastErr          error
 }
 
-// ParserConfig has information for parser
+// ParserConfig allows to configure the parser.
 type ParserConfig struct {
-	Comma         rune
-	IgnoreHeaders bool
+	Comma                  rune
+	IgnoreHeaders          bool
+	IgnoreUnmatchingFields bool
 }
 
 type Decoder interface {
@@ -54,9 +55,11 @@ func newParser(reader io.Reader, config ParserConfig) (*Parser, error) {
 }
 
 // Scan copies the values in the current row into the values pointed
-// at by dest. The number of values in dest can be different than the
-// number of values. In this case Scan will only fill the available
-// values.
+// at by dest.
+// With the defult behaviour, it will throw an error if the number of values in dest
+// is different from the number of values.
+// If the `IgnoreUnmatchingFields` flag is set, it will ignore the records and the
+// arguments that have no match.
 //
 // Scan converts columns read from the database into the following
 // common types:
@@ -72,12 +75,23 @@ func newParser(reader io.Reader, config ParserConfig) (*Parser, error) {
 //
 func (p *Parser) Scan(dest ...interface{}) error {
 	if p.currentRowValues == nil {
-		return errors.New("Scan called without calling Next")
+		return errors.New("scan called without calling Next")
+	}
+	if !p.config.IgnoreUnmatchingFields && len(p.currentRowValues) != len(dest) {
+		return fmt.Errorf("%w: got %d scan targets and %d records",
+			ErrScanTargetsNotMatch,
+			len(dest),
+			len(p.currentRowValues),
+		)
 	}
 	for i, val := range p.currentRowValues {
+		if i >= len(dest) {
+			// ignore the remaining records as they have no scan target
+			break
+		}
 		err := convertAssignValue(dest[i], val)
 		if err != nil {
-			return fmt.Errorf(`Scan error on value index %d: %v`, i, err)
+			return fmt.Errorf("scan error on value index %d: %v", i, err)
 		}
 	}
 	return nil

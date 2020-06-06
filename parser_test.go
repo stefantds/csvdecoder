@@ -79,6 +79,20 @@ func TestParserIgnoreUnmatchingFields(t *testing.T) {
 			scanTargets:   []interface{}{&strVal},
 			expectedError: ErrScanTargetsNotMatch,
 		},
+		{
+			name:          "should fail with more targets with the default config",
+			config:        ParserConfig{},
+			data:          "rec,2\n",
+			scanTargets:   []interface{}{&strVal, &intVal, &anotherIntVal},
+			expectedError: ErrScanTargetsNotMatch,
+		},
+		{
+			name:          "should fail with more records with the default config",
+			config:        ParserConfig{},
+			data:          "rec,2\n",
+			scanTargets:   []interface{}{&strVal},
+			expectedError: ErrScanTargetsNotMatch,
+		},
 	} {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {

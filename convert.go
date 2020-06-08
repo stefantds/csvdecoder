@@ -90,7 +90,7 @@ func convertAssignValue(dest interface{}, src string) error {
 		}
 		dv.SetFloat(f64)
 		return nil
-	case reflect.Slice:
+	case reflect.Slice, reflect.Array:
 		objType := dv.Type()
 		obj := reflect.New(objType).Interface()
 

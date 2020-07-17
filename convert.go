@@ -26,7 +26,7 @@ func convertAssignValue(dest interface{}, src string) error {
 	}
 
 	// check if the destination implements the Decoder interface
-	if decoder, ok := dest.(Decoder); ok {
+	if decoder, ok := dest.(Interface); ok {
 		return decoder.DecodeRecord(src)
 	}
 

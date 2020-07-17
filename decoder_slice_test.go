@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestIntArray(t *testing.T) {
+func TestIntSlice(t *testing.T) {
 	type TestRow struct {
 		Field []int
 	}
@@ -44,13 +44,13 @@ func TestIntArray(t *testing.T) {
 	} {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			parser, err := NewParserWithConfig(strings.NewReader(tc.data), ParserConfig{IgnoreHeaders: false, Comma: '\t'})
+			d, err := NewWithConfig(strings.NewReader(tc.data), Config{IgnoreHeaders: false, Comma: '\t'})
 			if err != nil {
-				t.Fatalf("could not create parser: %w", err)
+				t.Fatalf("could not create d: %w", err)
 			}
 
-			for parser.Next() {
-				err := parser.Scan(&tc.RowStruct.Field)
+			for d.Next() {
+				err := d.Scan(&tc.RowStruct.Field)
 				if err != nil {
 					t.Error(err)
 				}
@@ -59,14 +59,14 @@ func TestIntArray(t *testing.T) {
 					t.Errorf("expected value '%v' got '%v'", tc.expected, tc.RowStruct.Field)
 				}
 			}
-			if parser.Err() != nil {
-				t.Errorf("parser error: %w", err)
+			if d.Err() != nil {
+				t.Errorf("d error: %w", err)
 			}
 		})
 	}
 }
 
-func TestMultiLevelIntArray(t *testing.T) {
+func TestMultiLevelIntSlice(t *testing.T) {
 	type TestRow struct {
 		Field [][][]int
 	}
@@ -104,13 +104,13 @@ func TestMultiLevelIntArray(t *testing.T) {
 	} {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			parser, err := NewParserWithConfig(strings.NewReader(tc.data), ParserConfig{IgnoreHeaders: false, Comma: '\t'})
+			d, err := NewWithConfig(strings.NewReader(tc.data), Config{IgnoreHeaders: false, Comma: '\t'})
 			if err != nil {
-				t.Fatalf("could not create parser: %w", err)
+				t.Fatalf("could not create d: %w", err)
 			}
 
-			for parser.Next() {
-				err := parser.Scan(&tc.RowStruct.Field)
+			for d.Next() {
+				err := d.Scan(&tc.RowStruct.Field)
 				if err != nil {
 					t.Error(err)
 				}
@@ -119,14 +119,14 @@ func TestMultiLevelIntArray(t *testing.T) {
 					t.Errorf("expected value '%v' got '%v'", tc.expected, tc.RowStruct.Field)
 				}
 			}
-			if parser.Err() != nil {
-				t.Errorf("parser error: %w", err)
+			if d.Err() != nil {
+				t.Errorf("d error: %w", err)
 			}
 		})
 	}
 }
 
-func TestStructArray(t *testing.T) {
+func TestStructSlice(t *testing.T) {
 	type MyStruct struct {
 		A int    `json:"a"`
 		B int32  `json:"b"`
@@ -189,13 +189,13 @@ func TestStructArray(t *testing.T) {
 	} {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			parser, err := NewParserWithConfig(strings.NewReader(tc.data), ParserConfig{IgnoreHeaders: false, Comma: '\t'})
+			d, err := NewWithConfig(strings.NewReader(tc.data), Config{IgnoreHeaders: false, Comma: '\t'})
 			if err != nil {
-				t.Fatalf("could not create parser: %w", err)
+				t.Fatalf("could not create d: %w", err)
 			}
 
-			for parser.Next() {
-				err := parser.Scan(&tc.RowStruct.Field)
+			for d.Next() {
+				err := d.Scan(&tc.RowStruct.Field)
 				if err != nil {
 					t.Error(err)
 				}
@@ -204,8 +204,8 @@ func TestStructArray(t *testing.T) {
 					t.Errorf("expected value '%v' got '%v'", tc.expected, tc.RowStruct.Field)
 				}
 			}
-			if parser.Err() != nil {
-				t.Errorf("parser error: %w", err)
+			if d.Err() != nil {
+				t.Errorf("d error: %w", err)
 			}
 		})
 	}

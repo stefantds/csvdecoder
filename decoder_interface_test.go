@@ -39,20 +39,20 @@ func TestDecoderStruct(t *testing.T) {
 	} {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			parser, err := NewParserWithConfig(strings.NewReader(tc.data), ParserConfig{IgnoreHeaders: false, Comma: '\t'})
+			d, err := NewWithConfig(strings.NewReader(tc.data), Config{IgnoreHeaders: false, Comma: '\t'})
 			if err != nil {
-				t.Fatalf("could not create parser: %w", err)
+				t.Fatalf("could not create d: %w", err)
 			}
 
-			for parser.Next() {
-				if err := parser.Scan(&tc.dest); err != nil {
+			for d.Next() {
+				if err := d.Scan(&tc.dest); err != nil {
 					t.Error(err)
 				}
 				if tc.dest.DecodedValue() != tc.expected {
 					t.Errorf("expected value '%s' got '%s'", tc.expected, tc.dest.DecodedValue())
 				}
 			}
-			if parser.Err() != nil {
+			if d.Err() != nil {
 				t.Error(err)
 			}
 		})
@@ -75,20 +75,20 @@ func TestDecoderPointer(t *testing.T) {
 	} {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			parser, err := NewParserWithConfig(strings.NewReader(tc.data), ParserConfig{IgnoreHeaders: false, Comma: '\t'})
+			d, err := NewWithConfig(strings.NewReader(tc.data), Config{IgnoreHeaders: false, Comma: '\t'})
 			if err != nil {
-				t.Fatalf("could not create parser: %w", err)
+				t.Fatalf("could not create d: %w", err)
 			}
 
-			for parser.Next() {
-				if err := parser.Scan(&tc.dest); err != nil {
+			for d.Next() {
+				if err := d.Scan(&tc.dest); err != nil {
 					t.Error(err)
 				}
 				if tc.dest.DecodedValue() != tc.expected {
 					t.Errorf("expected value '%s' got '%s'", tc.expected, tc.dest.DecodedValue())
 				}
 			}
-			if parser.Err() != nil {
+			if d.Err() != nil {
 				t.Error(err)
 			}
 		})
@@ -112,20 +112,20 @@ func TestDecoderDoublePointer(t *testing.T) {
 	} {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			parser, err := NewParserWithConfig(strings.NewReader(tc.data), ParserConfig{IgnoreHeaders: false, Comma: '\t'})
+			d, err := NewWithConfig(strings.NewReader(tc.data), Config{IgnoreHeaders: false, Comma: '\t'})
 			if err != nil {
-				t.Fatalf("could not create parser: %w", err)
+				t.Fatalf("could not create d: %w", err)
 			}
 
-			for parser.Next() {
-				if err := parser.Scan(&tc.dest); err != nil {
+			for d.Next() {
+				if err := d.Scan(&tc.dest); err != nil {
 					t.Error(err)
 				}
 				if (*tc.dest).DecodedValue() != tc.expected {
 					t.Errorf("expected value '%s' got '%s'", tc.expected, (*tc.dest).DecodedValue())
 				}
 			}
-			if parser.Err() != nil {
+			if d.Err() != nil {
 				t.Error(err)
 			}
 		})
@@ -135,7 +135,7 @@ func TestDecoderDoublePointer(t *testing.T) {
 func TestDecoderInterface(t *testing.T) {
 	for _, tc := range []struct {
 		name     string
-		dest     Decoder
+		dest     Interface
 		data     string
 		expected string
 	}{
@@ -148,20 +148,20 @@ func TestDecoderInterface(t *testing.T) {
 	} {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			parser, err := NewParserWithConfig(strings.NewReader(tc.data), ParserConfig{IgnoreHeaders: false})
+			d, err := NewWithConfig(strings.NewReader(tc.data), Config{IgnoreHeaders: false})
 			if err != nil {
-				t.Fatalf("could not create parser: %w", err)
+				t.Fatalf("could not create d: %w", err)
 			}
 
-			for parser.Next() {
-				if err := parser.Scan(tc.dest); err != nil {
+			for d.Next() {
+				if err := d.Scan(tc.dest); err != nil {
 					t.Error(err)
 				}
 				if tc.dest.(*MyDecoder).DecodedValue() != tc.expected {
 					t.Errorf("expected value '%s' got '%s'", tc.expected, tc.dest.(*MyDecoder).DecodedValue())
 				}
 			}
-			if parser.Err() != nil {
+			if d.Err() != nil {
 				t.Error(err)
 			}
 		})

@@ -13,14 +13,14 @@ type Point struct {
 	Y int
 }
 
-// DecodeRecord implements the csvdecoder.Interface type
-func (p *Point) DecodeRecord(record string) error {
+// DecodeField implements the csvdecoder.Interface type
+func (p *Point) DecodeField(field string) error {
 	// the decode code is specific to the way the object is serialized.
 	// in this example the point is encoded as a JSON array with two values
 
 	data := make([]int, 2)
-	if err := json.NewDecoder(strings.NewReader(record)).Decode(&data); err != nil {
-		return fmt.Errorf("could not parse %s as JSON array: %w", record, err)
+	if err := json.NewDecoder(strings.NewReader(field)).Decode(&data); err != nil {
+		return fmt.Errorf("could not parse %s as JSON array: %w", field, err)
 	}
 
 	(*p).X = data[0]

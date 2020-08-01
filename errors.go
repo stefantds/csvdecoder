@@ -6,7 +6,7 @@ import (
 
 var (
 	ErrEOF                 = errors.New("end of file reached") // ErrEOF is thrown if the EOF is reached by the Next method.
-	ErrScanTargetsNotMatch = errors.New("the number of scan targets does not match the number of csv records")
+	ErrScanTargetsNotMatch = errors.New("the number of scan targets does not match the number of csv fields")
 	ErrReadingOccurred     = errors.New("can't continue after a reading error")
 	ErrNextNotCalled       = errors.New("scan called without calling Next")
 

@@ -53,7 +53,7 @@ func TestIgnoreUnmatchingFields(t *testing.T) {
 			expectedError: nil,
 		},
 		{
-			name: "should work with more records when the flag is true",
+			name: "should work with more fields when the flag is true",
 			config: Config{
 				IgnoreUnmatchingFields: true,
 			},
@@ -71,7 +71,7 @@ func TestIgnoreUnmatchingFields(t *testing.T) {
 			expectedError: ErrScanTargetsNotMatch,
 		},
 		{
-			name: "should fail with more records when the flag is false",
+			name: "should fail with more fields when the flag is false",
 			config: Config{
 				IgnoreUnmatchingFields: false,
 			},
@@ -87,7 +87,7 @@ func TestIgnoreUnmatchingFields(t *testing.T) {
 			expectedError: ErrScanTargetsNotMatch,
 		},
 		{
-			name:          "should fail with more records with the default config",
+			name:          "should fail with more fields with the default config",
 			config:        Config{},
 			data:          "rec,2\n",
 			scanTargets:   []interface{}{&strVal},

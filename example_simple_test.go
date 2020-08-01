@@ -19,7 +19,7 @@ func Example_simple() {
 	//john,44,true
 	//lucy,48,false
 	//mr hyde,34,true
-	file, err := os.Open("./data/simple.csv")
+	file, err := os.Open("./example_data/simple.csv")
 	if err != nil {
 		// handle error
 		return

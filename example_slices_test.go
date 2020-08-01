@@ -9,11 +9,11 @@ import (
 
 type MyStringCollection []string
 
-// DecodeRecord implements the csvdecoder.Interface type
-func (c *MyStringCollection) DecodeRecord(record string) error {
+// DecodeField implements the csvdecoder.Interface type
+func (c *MyStringCollection) DecodeField(field string) error {
 	// the decode code is specific to the way the value is serialized.
 	// in this example the array is represented as int values separated by space
-	*c = MyStringCollection(strings.Split(record, " "))
+	*c = MyStringCollection(strings.Split(field, " "))
 
 	return nil
 }

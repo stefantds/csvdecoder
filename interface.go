@@ -11,5 +11,5 @@ package csvdecoder
 // parsing and decoding is stopped and the error
 // is returned to the caller of Scan.
 type Interface interface {
-	DecodeRecord(s string) error
+	DecodeField(s string) error
 }

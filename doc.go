@@ -12,8 +12,8 @@
 // - `*uint`, `*uint8`, `*uint16`, `*uint32`, `*uint64`
 // - `*bool`
 // - `*float32`, `*float64`
-// - a slice of values. Note that the CSV record must be a valid JSON array. If not a JSON array, a custom decoder implementing the `csvdecoder.Interface` interface must be implemented.
-// - an array of values. Note that the CSV record must be a valid JSON array. If not a JSON array, a custom decoder implementing the `csvdecoder.Interface` interface must be implemented.
+// - a slice of values. Note that the CSV field must be a valid JSON array. If not a JSON array, a custom decoder implementing the `csvdecoder.Interface` interface must be implemented.
+// - an array of values. Note that the CSV field must be a valid JSON array. If not a JSON array, a custom decoder implementing the `csvdecoder.Interface` interface must be implemented.
 // - a pointer to any type implementing the `csvdecoder.Interface` interface
 
 // csvdecoder uses the same terminology as package encoding/csv:
@@ -26,7 +26,7 @@
 // The behavior of the decoder can be configured by passing one of following options when creating the decoder:
 // - Comma: the character that separates values. The default value is comma.
 // - IgnoreHeaders: if set to true, the first line will be ignored. This is useful when the CSV file contains a header line.
-// - IgnoreUnmatchingFields: if set to true, the number of records and scan targets are allowed to be different. By default, if they don't match exactly it will cause an error.
+// - IgnoreUnmatchingFields: if set to true, the number of fields and scan targets are allowed to be different. By default, if they don't match exactly it will cause an error.
 
 // See README.md for more info.
 package csvdecoder

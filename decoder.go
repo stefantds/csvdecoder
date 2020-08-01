@@ -18,7 +18,7 @@ type Decoder struct {
 type Config struct {
 	Comma                  rune // the character that separates values. Default value is comma.
 	IgnoreHeaders          bool // if set to true, the first line will be ignored
-	IgnoreUnmatchingFields bool // if set to true, the number of records and scan targets are allowed to be different
+	IgnoreUnmatchingFields bool // if set to true, the number of fields and scan targets are allowed to be different
 }
 
 // New returns a new CSV decoder that reads from r.
@@ -57,7 +57,7 @@ func newDecoder(reader io.Reader, config Config) (*Decoder, error) {
 // at by dest.
 // With the default behavior, it will throw an error if the number of values in dest
 // is different from the number of values. If the `IgnoreUnmatchingFields` flag is
-// set, it will ignore the records and the arguments that have no match.
+// set, it will ignore the fields and the arguments that have no match.
 //
 // Scan converts columns read from the source into the following
 // types:
@@ -80,7 +80,7 @@ func (p *Decoder) Scan(dest ...interface{}) error {
 	case p.currentRowValues == nil:
 		return ErrNextNotCalled
 	case !p.config.IgnoreUnmatchingFields && len(p.currentRowValues) != len(dest):
-		return fmt.Errorf("%w: got %d scan targets and %d records",
+		return fmt.Errorf("%w: got %d scan targets and %d fields",
 			ErrScanTargetsNotMatch,
 			len(dest),
 			len(p.currentRowValues),
@@ -88,7 +88,7 @@ func (p *Decoder) Scan(dest ...interface{}) error {
 	}
 	for i, val := range p.currentRowValues {
 		if i >= len(dest) {
-			// ignore the remaining records as they have no scan target
+			// ignore the remaining fields as they have no scan target
 			break
 		}
 		err := convertAssignValue(dest[i], val)

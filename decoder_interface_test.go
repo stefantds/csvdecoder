@@ -9,7 +9,7 @@ type MyDecoder struct {
 	value string
 }
 
-func (d *MyDecoder) DecodeRecord(value string) error {
+func (d *MyDecoder) DecodeField(value string) error {
 	d.value = value + "!"
 	return nil
 }
@@ -33,8 +33,8 @@ func TestDecoderStruct(t *testing.T) {
 		{
 			name:     "should work for a struct using the Decoder interface",
 			dest:     MyDecoder{},
-			data:     "record1\n",
-			expected: "record1!",
+			data:     "field1\n",
+			expected: "field1!",
 		},
 	} {
 		tc := tc
@@ -69,8 +69,8 @@ func TestDecoderPointer(t *testing.T) {
 		{
 			name:     "should work for a struct holding a pointer to a decoder",
 			dest:     &MyDecoder{},
-			data:     "record1\n",
-			expected: "record1!",
+			data:     "field1\n",
+			expected: "field1!",
 		},
 	} {
 		tc := tc
@@ -106,8 +106,8 @@ func TestDecoderDoublePointer(t *testing.T) {
 		{
 			name:     "should work for a struct holding a double pointer to a decoder",
 			dest:     &myDec,
-			data:     "record1\n",
-			expected: "record1!",
+			data:     "field1\n",
+			expected: "field1!",
 		},
 	} {
 		tc := tc
@@ -142,8 +142,8 @@ func TestDecoderInterface(t *testing.T) {
 		{
 			name:     "should work for a struct using the Decoder interface",
 			dest:     &MyDecoder{},
-			data:     "record1\n",
-			expected: "record1!",
+			data:     "field1\n",
+			expected: "field1!",
 		},
 	} {
 		tc := tc

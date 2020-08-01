@@ -1,8 +1,12 @@
 # csvdecoder
 
-csvdecoder is a Go library for parsing and decoding csv files into Go objects. It uses [encoding/csv](https://golang.org/pkg/encoding/csv/) for the parsing and follows a usage pattern inspired by the [database/sql](https://golang.org/pkg/database/sql/) package.
+csvdecoder is a Go library for parsing and deserializing csv files into Go objects.
+It relies on [encoding/csv](https://golang.org/pkg/encoding/csv/) for the actual parsing of the CSV file and follows a similar usage pattern as the [database/sql](https://golang.org/pkg/database/sql/) package for scanning rows.
 
-The scanning method is *not multi-thread safe*; `Next` and `Scan` are not expected to be called concurrently.
+csvdecoder allows to iterate through the CSV records (using 'Next') and scan the fields into target variables or fields of variables (using 'Scan').
+
+The scanning method is **not thread safe**; `Next` and `Scan` are not expected to be called concurrently.
+
 ## Installation
 
 ```bash
@@ -84,9 +88,9 @@ See also the example files for more usage examples.
 
 ## Configuration
 
-The behaviour of the decoder can be configured by passing one of following options when creating the decoder:
+The behavior of the decoder can be configured by passing one of following options when creating the decoder:
 - Comma: the character that separates values. Default value is comma.
-- IgnoreHeaders: if set to true, the first line will be ignored
+- IgnoreHeaders: if set to true, the first line will be ignored. This is useful when the CSV file contains a header line.
 - IgnoreUnmatchingFields: if set to true, the number of records and scan targets are allowed to be different. By default, if they don't match exactly it will cause an error.
 
 ```golang
@@ -94,9 +98,11 @@ The behaviour of the decoder can be configured by passing one of following optio
 ```
 
 ## Contributing
+
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 Please make sure to update tests as needed.
 
 ## License
+
 [MIT](https://choosealicense.com/licenses/mit/)

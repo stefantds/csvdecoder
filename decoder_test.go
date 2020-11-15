@@ -37,6 +37,15 @@ func TestIgnoreUnmatchingFields(t *testing.T) {
 			expectedError: nil,
 		},
 		{
+			name: "should work for a string containing a quote",
+			config: Config{
+				IgnoreUnmatchingFields: true,
+			},
+			data:          "rec,2\"\n",
+			scanTargets:   []interface{}{&strVal, &strVal},
+			expectedError: nil,
+		},
+		{
 			name:          "should work when numbers match with default config",
 			config:        Config{},
 			data:          "rec,2\n",
@@ -98,7 +107,7 @@ func TestIgnoreUnmatchingFields(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			d, err := NewWithConfig(strings.NewReader(tc.data), tc.config)
 			if err != nil {
-				t.Fatalf("could not create d: %w", err)
+				t.Fatalf("could not create d: %s", err)
 			}
 
 			for d.Next() {

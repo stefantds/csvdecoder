@@ -92,6 +92,7 @@ The behavior of the decoder can be configured by passing one of following option
 - Comma: the character that separates values. Default value is comma.
 - IgnoreHeaders: if set to true, the first line will be ignored. This is useful when the CSV file contains a header line.
 - IgnoreUnmatchingFields: if set to true, the number of fields and scan targets are allowed to be different. By default, if they don't match exactly it will cause an error.
+- EscapeChar: the character used to escape the quote character in quoted fields. The default is the quote itself as used by the `encoding/csv` reader.
 
 ```golang
 	decoder, err := csvdecoder.NewWithConfig(file, csvdecoder.Config{Comma: ';', IgnoreHeaders: true})

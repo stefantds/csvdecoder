@@ -41,7 +41,7 @@ func TestDecoderStruct(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			d, err := NewWithConfig(strings.NewReader(tc.data), Config{IgnoreHeaders: false, Comma: '\t'})
 			if err != nil {
-				t.Fatalf("could not create d: %w", err)
+				t.Fatalf("could not create d: %s", err)
 			}
 
 			for d.Next() {
@@ -77,7 +77,7 @@ func TestDecoderPointer(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			d, err := NewWithConfig(strings.NewReader(tc.data), Config{IgnoreHeaders: false, Comma: '\t'})
 			if err != nil {
-				t.Fatalf("could not create d: %w", err)
+				t.Fatalf("could not create d: %s", err)
 			}
 
 			for d.Next() {
@@ -114,7 +114,7 @@ func TestDecoderDoublePointer(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			d, err := NewWithConfig(strings.NewReader(tc.data), Config{IgnoreHeaders: false, Comma: '\t'})
 			if err != nil {
-				t.Fatalf("could not create d: %w", err)
+				t.Fatalf("could not create d: %s", err)
 			}
 
 			for d.Next() {
@@ -150,7 +150,7 @@ func TestDecoderInterface(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			d, err := NewWithConfig(strings.NewReader(tc.data), Config{IgnoreHeaders: false})
 			if err != nil {
-				t.Fatalf("could not create d: %w", err)
+				t.Fatalf("could not create d: %s", err)
 			}
 
 			for d.Next() {

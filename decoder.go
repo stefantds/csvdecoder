@@ -19,6 +19,7 @@ type Config struct {
 	Comma                  rune // the character that separates values. Default value is comma.
 	IgnoreHeaders          bool // if set to true, the first line will be ignored
 	IgnoreUnmatchingFields bool // if set to true, the number of fields and scan targets are allowed to be different
+	EscapeChar             rune // the character used to escape the quote character in quoted fields. The default is the quote itself.
 }
 
 // New returns a new CSV decoder that reads from r.
@@ -29,10 +30,20 @@ func NewWithConfig(r io.Reader, config Config) (*Decoder, error) {
 
 // New returns a new CSV decoder that reads from r
 func New(r io.Reader) (*Decoder, error) {
-	return newDecoder(r, Config{})
+	return newDecoder(r, Config{
+		EscapeChar: defaultEscapeChar,
+	})
 }
 
 func newDecoder(reader io.Reader, config Config) (*Decoder, error) {
+	if config.EscapeChar != defaultEscapeChar {
+		var err error
+		reader, err = NewReaderWithCustomEscape(reader, config.EscapeChar)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	p := &Decoder{
 		reader: csv.NewReader(reader),
 		config: config,
